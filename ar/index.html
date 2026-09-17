@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AR眼镜呈现360°全景素材方案</title>
+  <meta name="description" content="AR眼镜呈现360°全景照片与视频的可用产品、产品参数和实现条件。" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2318252d'/%3E%3Cpath d='M10 31c7-14 37-14 44 0-7 15-37 15-44 0Z' fill='none' stroke='%2347c9a8' stroke-width='5'/%3E%3Ccircle cx='32' cy='31' r='7' fill='%23ffffff'/%3E%3C/svg%3E" />
+  <style>
+    :root{--ink:#17242c;--muted:#5f6d75;--line:#d9e0e3;--soft:#f3f6f7;--green:#14785f;--green-soft:#e7f5f0;--amber:#8b5a12;--amber-soft:#fff5df}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:16px;line-height:1.65}a{color:var(--green);text-underline-offset:3px}.page{width:min(940px,calc(100% - 32px));margin:auto}.topbar{background:#fff;border-bottom:1px solid var(--line)}.topbar .page{height:58px;display:flex;align-items:center;justify-content:space-between}.name{font-weight:760}.nav{display:flex;gap:22px}.nav a{color:var(--muted);text-decoration:none;font-size:14px}.nav a:hover{color:var(--ink)}
+    main{padding:48px 0 72px}.title{margin:0;font-size:clamp(30px,5vw,44px);line-height:1.2;letter-spacing:-.02em}.meta{margin:10px 0 0;color:var(--muted)}.result{margin-top:28px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--green);padding:22px 24px;display:grid;grid-template-columns:110px 1fr;gap:22px}.result-label{font-size:14px;color:var(--green);font-weight:760}.result-text{font-size:18px;font-weight:650}.result-note{display:block;margin-top:6px;color:var(--muted);font-size:15px;font-weight:400}
+    section{margin-top:48px}.section-title{margin:0 0 18px;font-size:25px;line-height:1.3}.product{background:#fff;border:1px solid var(--line)}.product-head{display:grid;grid-template-columns:300px 1fr;gap:28px;padding:26px;border-bottom:1px solid var(--line)}.product-image{height:230px;background:#f3f5f5;display:grid;place-items:center;overflow:hidden}.product-image img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}.status{display:inline-block;background:var(--green-soft);color:var(--green);padding:4px 9px;font-size:13px;font-weight:760}.product h3{margin:10px 0 4px;font-size:28px;line-height:1.25}.model{color:var(--muted);margin:0}.product-copy{margin:18px 0 0}.links{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px}.links a{font-weight:700;font-size:14px}.spec-wrap{padding:26px}.spec-group+.spec-group{margin-top:24px}.spec-group h4{margin:0 0 10px;font-size:17px}.spec-table{width:100%;border-collapse:collapse}.spec-table th,.spec-table td{padding:11px 12px;text-align:left;border-top:1px solid var(--line);vertical-align:top}.spec-table th{width:190px;color:var(--muted);font-weight:500}.spec-table td{font-weight:620}
+    .fit-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line)}.fit-table th,.fit-table td{padding:16px 18px;text-align:left;border-top:1px solid var(--line);vertical-align:top}.fit-table thead th{border-top:0;background:#edf1f2;font-size:14px}.fit-table tbody th{width:180px;font-weight:680}.yes,.conditional,.no{display:inline-block;font-size:13px;font-weight:760;padding:3px 8px;margin-right:8px}.yes{background:var(--green-soft);color:var(--green)}.conditional{background:var(--amber-soft);color:var(--amber)}.no{background:#eef0f1;color:#59646a}
+    .steps{background:#fff;border:1px solid var(--line);counter-reset:item}.step{display:grid;grid-template-columns:46px 1fr;gap:16px;padding:20px 22px;border-top:1px solid var(--line)}.step:first-child{border-top:0}.step:before{counter-increment:item;content:counter(item);width:34px;height:34px;background:#eaf0f1;display:grid;place-items:center;font-weight:760}.step h3{margin:2px 0 3px;font-size:17px}.step p{margin:0;color:var(--muted)}.step code{background:#eef2f3;padding:2px 5px;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
+    .existing{background:#fff;border:1px solid var(--line)}.existing-row{display:grid;grid-template-columns:185px 110px 1fr;gap:16px;padding:16px 18px;border-top:1px solid var(--line)}.existing-row:first-child{border-top:0}.existing-row b{font-weight:700}.existing-row p{margin:0;color:var(--muted)}.source-list{margin:0;padding-left:21px;color:var(--muted)}.source-list li+li{margin-top:8px}.foot{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+    @media(max-width:720px){.nav{display:none}main{padding-top:32px}.result{grid-template-columns:1fr;gap:5px}.product-head{grid-template-columns:1fr}.product-image{height:210px}.spec-table th{width:42%}.fit-table,.fit-table tbody,.fit-table tr,.fit-table th,.fit-table td{display:block}.fit-table thead{display:none}.fit-table tbody tr{border-top:1px solid var(--line);padding:12px 0}.fit-table tbody tr:first-child{border-top:0}.fit-table th,.fit-table td{border:0;padding:5px 16px;width:auto}.existing-row{grid-template-columns:1fr;gap:5px}.existing-row+.existing-row{border-top:1px solid var(--line)}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="page"><div class="name">AR全景素材设备说明</div><nav class="nav"><a href="#products">可用产品</a><a href="#requirements">实现条件</a><a href="#existing">现有设备</a><a href="#sources">资料链接</a></nav></div></header>
+  <main class="page">
+    <h1 class="title">AR眼镜呈现360°全景素材方案</h1>
+    <p class="meta">使用场景：工地人员佩戴，查看360°全景照片或视频。</p>
+
+    <div class="result">
+      <div class="result-label">结论</div>
+      <div class="result-text">可以实现。推荐使用 Rokid AR Spatial（Rokid Max 2 + Station 2）。
+        <span class="result-note">360° / 180°视频可通过 Hyperweb Browser 播放；360°全景照片需要放入全景网页查看器，或制作成 Unity 应用后在 Station 2 上运行。</span>
+      </div>
+    </div>
+
+    <section id="products">
+      <h2 class="section-title">可用产品</h2>
+      <article class="product">
+        <div class="product-head">
+          <div class="product-image"><img src="https://global.rokid.com/cdn/shop/files/Spatial.png?v=1789225138&width=1200" alt="Rokid AR Spatial官方产品图" /></div>
+          <div>
+            <span class="status">满足要求</span>
+            <h3>Rokid AR Spatial</h3>
+            <p class="model">组成：Rokid Max 2 AR眼镜 + Rokid Station 2计算终端</p>
+            <p class="product-copy">Max 2负责透明显示，Station 2负责运行浏览器、应用和空间界面。需要购买整套 AR Spatial；仅购买 Max 2 时，眼镜主要作为外接显示器使用，不能独立完成全景内容运行。</p>
+            <div class="links"><a href="https://global.rokid.com/products/rokid-ar-spatial" target="_blank" rel="noreferrer">官方产品页</a><a href="https://global.rokid.com/products/rokid-max-2-ar-glasses" target="_blank" rel="noreferrer">Max 2官方页面</a><a href="https://global.rokid.com/pages/faq" target="_blank" rel="noreferrer">官方FAQ</a></div>
+          </div>
+        </div>
+        <div class="spec-wrap">
+          <div class="spec-group">
+            <h4>Rokid Max 2 参数</h4>
+            <table class="spec-table"><tbody>
+              <tr><th>显示器</th><td>Micro-OLED，双目显示</td></tr>
+              <tr><th>单眼分辨率</th><td>默认 1920 × 1080；连接 Station 2 可达 1920 × 1200</td></tr>
+              <tr><th>刷新率</th><td>最高 120 Hz</td></tr>
+              <tr><th>亮度</th><td>最高 600 nits</td></tr>
+              <tr><th>视场角</th><td>50°</td></tr>
+              <tr><th>眼镜重量</th><td>约 75 g</td></tr>
+              <tr><th>近视调节</th><td>0.00 D 至 −6.00 D</td></tr>
+              <tr><th>连接方式</th><td>USB-C DisplayPort</td></tr>
+            </tbody></table>
+          </div>
+          <div class="spec-group">
+            <h4>Rokid Station 2 参数</h4>
+            <table class="spec-table"><tbody>
+              <tr><th>运行内存 / 存储</th><td>8 GB RAM / 128 GB ROM</td></tr>
+              <tr><th>无线连接</th><td>Wi-Fi 6、Bluetooth 5.2</td></tr>
+              <tr><th>电池</th><td>5000 mAh</td></tr>
+              <tr><th>充电</th><td>18 W</td></tr>
+              <tr><th>空间显示</th><td>3DoF头部跟踪、空间浏览器、多窗口显示</td></tr>
+              <tr><th>内容入口</th><td>Hyperweb Browser 或安装的XR应用</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section>
+      <h2 class="section-title">素材支持情况</h2>
+      <table class="fit-table">
+        <thead><tr><th>素材</th><th>是否可用</th><th>实现方式</th></tr></thead>
+        <tbody>
+          <tr><th>360° / 180°视频</th><td><span class="yes">可以</span></td><td>使用 Station 2 的 Hyperweb Browser 播放。Rokid 官方 FAQ 已明确支持。</td></tr>
+          <tr><th>360°全景照片</th><td><span class="yes">可以</span></td><td>将2:1等距柱状投影照片放入全景网页查看器，或在 Unity 中贴到球体内表面/天空盒。</td></tr>
+          <tr><th>普通照片直接打开</th><td><span class="conditional">只能平面显示</span></td><td>系统相册直接打开只会显示为平面画面，不等同于360°沉浸查看。</td></tr>
+          <tr><th>离线工地使用</th><td><span class="yes">可以</span></td><td>将全景页面和图片打包为本地应用，或在有网络时提前缓存内容。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="requirements">
+      <h2 class="section-title">满足要求所需配置</h2>
+      <div class="steps">
+        <div class="step"><div><h3>使用完整设备套装</h3><p>使用 Rokid AR Spatial，即 Max 2 + Station 2。Max 2 单独使用不承担内容计算。</p></div></div>
+        <div class="step"><div><h3>准备标准全景素材</h3><p>照片使用等距柱状投影格式，宽高比为 <code>2:1</code>，文件格式使用 JPG 或 PNG；视频使用常见 MP4 编码。</p></div></div>
+        <div class="step"><div><h3>配置全景照片查看方式</h3><p>低开发量方案使用 Pannellum、Marzipano 或 Photo Sphere Viewer 制作全景网页；需要离线运行、视角记录或实验任务时，使用 Unity 制作应用。</p></div></div>
+        <div class="step"><div><h3>在 Station 2 中运行</h3><p>在线方案用 Hyperweb Browser 打开全景页面；离线方案安装已打包的应用。开启陀螺仪或头部转向控制后，佩戴者通过转头查看不同方向。</p></div></div>
+        <div class="step"><div><h3>工地使用条件</h3><p>为避免强光影响，配置遮光罩；提前缓存或本地存储素材；设置单一入口和固定操作流程，减少工人现场操作步骤。</p></div></div>
+      </div>
+    </section>
+
+    <section id="existing">
+      <h2 class="section-title">实验室现有设备</h2>
+      <div class="existing">
+        <div class="existing-row"><b>HoloLens 2</b><div><span class="yes">可以</span></div><p>实验室现有设备可直接用于方案开发。需要使用 Unity 制作全景照片应用并部署到设备。重量约566 g，现场便携性低于 Rokid Max 2。</p></div>
+        <div class="existing-row"><b>乐奇 AI 眼镜</b><div><span class="conditional">暂不能确认</span></div><p>设备表未提供具体型号。只有带显示屏、支持浏览器或应用安装的型号才可满足要求；无显示版本不能使用。</p></div>
+        <div class="existing-row"><b>PICO 4 Pro / Quest Pro</b><div><span class="no">不纳入AR方案</span></div><p>可以查看全景素材，但属于VR/MR头显，不符合本页的轻便AR眼镜路线。</p></div>
+      </div>
+    </section>
+
+    <section id="sources">
+      <h2 class="section-title">资料链接</h2>
+      <ul class="source-list">
+        <li><a href="https://global.rokid.com/products/rokid-ar-spatial" target="_blank" rel="noreferrer">Rokid AR Spatial 官方产品页</a>：套装组成、Station 2内存、存储、无线连接和电池参数。</li>
+        <li><a href="https://global.rokid.com/blogs/max-2/what-is-the-display-resolution-of-the-rokid-max-2" target="_blank" rel="noreferrer">Rokid Max 2 分辨率说明</a>：默认1920 × 1080，连接Station 2可达1920 × 1200。</li>
+        <li><a href="https://global.rokid.com/pages/faq" target="_blank" rel="noreferrer">Rokid 官方 FAQ</a>：Hyperweb Browser支持360° / 180°内容播放。</li>
+        <li><a href="https://learn.microsoft.com/en-us/hololens/hololens2-hardware" target="_blank" rel="noreferrer">Microsoft HoloLens 2硬件说明</a>：设备能力与566 g重量参数。</li>
+      </ul>
+    </section>
+
+    <div class="foot">结论范围：360°全景照片和视频的显示与浏览。BIM模型叠加、空间锚定、视线追踪和实验数据记录需要单独开发。</div>
+  </main>
+</body>
+</html>

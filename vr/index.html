@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VR头显呈现360°全景素材方案</title>
+  <meta name="description" content="PICO 4 Pro呈现360°全景照片与视频的设备参数、实现条件和现场限制。" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2318242b'/%3E%3Cpath d='M12 23h40l5 22H41l-5-8h-8l-5 8H7z' fill='none' stroke='%2359c3a7' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <style>
+    :root{--ink:#17242c;--muted:#617078;--line:#d8e0e3;--soft:#f3f6f7;--paper:#fff;--green:#13765e;--green-soft:#e7f5f0;--amber:#865b18;--amber-soft:#fff4dc;--dark:#182a32}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:16px;line-height:1.65}a{color:var(--green);text-underline-offset:3px}.page{width:min(940px,calc(100% - 32px));margin:auto}
+    .topbar{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.topbar .page{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:20px}.name{font-weight:760}.nav{display:flex;gap:22px}.nav a{color:var(--muted);text-decoration:none;font-size:14px}.nav a:hover{color:var(--ink)}
+    main{padding:48px 0 72px}.eyebrow{margin:0 0 9px;color:var(--green);font-size:13px;font-weight:780;letter-spacing:.09em}.title{margin:0;font-size:clamp(30px,5vw,44px);line-height:1.18;letter-spacing:-.025em}.meta{margin:12px 0 0;color:var(--muted)}
+    .result{margin-top:28px;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--green);padding:22px 24px;display:grid;grid-template-columns:110px 1fr;gap:22px}.result-label{font-size:14px;color:var(--green);font-weight:760}.result-text{font-size:18px;font-weight:670}.result-note{display:block;margin-top:7px;color:var(--muted);font-size:15px;font-weight:400}
+    section{margin-top:48px}.section-title{margin:0 0 18px;font-size:25px;line-height:1.3}.product{background:var(--paper);border:1px solid var(--line)}.product-head{display:grid;grid-template-columns:290px 1fr;gap:28px;padding:26px;border-bottom:1px solid var(--line)}.device-visual{min-height:230px;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#dbe7e7;padding:24px}.device-visual svg{width:190px;max-width:85%;height:auto}.device-visual small{margin-top:14px;color:#a8babd;letter-spacing:.08em}.status{display:inline-block;background:var(--green-soft);color:var(--green);padding:4px 9px;font-size:13px;font-weight:760}.product h3{margin:10px 0 4px;font-size:28px;line-height:1.25}.model{color:var(--muted);margin:0}.product-copy{margin:18px 0 0}.links{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px}.links a{font-weight:700;font-size:14px}.spec-wrap{padding:26px}.spec-group+.spec-group{margin-top:24px}.spec-group h4{margin:0 0 10px;font-size:17px}.spec-table{width:100%;border-collapse:collapse}.spec-table th,.spec-table td{padding:11px 12px;text-align:left;border-top:1px solid var(--line);vertical-align:top}.spec-table th{width:190px;color:var(--muted);font-weight:500}.spec-table td{font-weight:620}
+    .fit-table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line)}.fit-table th,.fit-table td{padding:16px 18px;text-align:left;border-top:1px solid var(--line);vertical-align:top}.fit-table thead th{border-top:0;background:#eaf0f1;font-size:14px}.fit-table tbody th{width:180px;font-weight:680}.yes,.conditional,.no{display:inline-block;font-size:13px;font-weight:760;padding:3px 8px;margin-right:8px;white-space:nowrap}.yes{background:var(--green-soft);color:var(--green)}.conditional{background:var(--amber-soft);color:var(--amber)}.no{background:#eef0f1;color:#59646a}
+    .steps{background:var(--paper);border:1px solid var(--line);counter-reset:item}.step{display:grid;grid-template-columns:46px 1fr;gap:16px;padding:20px 22px;border-top:1px solid var(--line)}.step:first-child{border-top:0}.step:before{counter-increment:item;content:counter(item);width:34px;height:34px;background:#eaf0f1;display:grid;place-items:center;font-weight:760}.step h3{margin:2px 0 3px;font-size:17px}.step p{margin:0;color:var(--muted)}code{background:#edf2f3;padding:2px 5px;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
+    .existing{background:var(--paper);border:1px solid var(--line)}.existing-row{display:grid;grid-template-columns:185px 110px 1fr;gap:16px;padding:17px 18px;border-top:1px solid var(--line)}.existing-row:first-child{border-top:0}.existing-row b{font-weight:700}.existing-row p{margin:0;color:var(--muted)}.notice{background:var(--amber-soft);border:1px solid #edd9ae;border-left:5px solid #b37c22;padding:20px 22px}.notice strong{display:block;margin-bottom:5px}.notice p{margin:0;color:#685331}.source-list{margin:0;padding-left:21px;color:var(--muted)}.source-list li+li{margin-top:8px}.foot{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+    @media(max-width:720px){.nav{display:none}main{padding-top:32px}.result{grid-template-columns:1fr;gap:5px}.product-head{grid-template-columns:1fr}.device-visual{min-height:205px}.spec-table th{width:42%}.fit-table,.fit-table tbody,.fit-table tr,.fit-table th,.fit-table td{display:block}.fit-table thead{display:none}.fit-table tbody tr{border-top:1px solid var(--line);padding:12px 0}.fit-table tbody tr:first-child{border-top:0}.fit-table th,.fit-table td{border:0;padding:5px 16px;width:auto}.existing-row{grid-template-columns:1fr;gap:5px}.existing-row+.existing-row{border-top:1px solid var(--line)}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="page"><div class="name">VR全景素材设备说明</div><nav class="nav"><a href="#product">可用产品</a><a href="#requirements">所需配置</a><a href="#existing">现有设备</a><a href="#sources">资料链接</a></nav></div></header>
+  <main class="page">
+    <p class="eyebrow">VR · 360°全景</p>
+    <h1 class="title">VR头显呈现360°全景素材方案</h1>
+    <p class="meta">使用场景：工地人员佩戴VR头显，查看360°全景照片或视频。</p>
+
+    <div class="result">
+      <div class="result-label">结论</div>
+      <div class="result-text">可以实现。实验室现有的两台 PICO 4 Pro 已经满足要求，不需要为全景素材展示另购头显。
+        <span class="result-note">安装 Wolvic 后可打开 WebXR 全景网页；需要离线运行、固定操作或记录实验数据时，制作 PICO / Unity 应用并将素材预装到设备。</span>
+      </div>
+    </div>
+
+    <section id="product">
+      <h2 class="section-title">可用产品</h2>
+      <article class="product">
+        <div class="product-head">
+          <div class="device-visual" aria-label="VR头显结构示意">
+            <svg viewBox="0 0 260 150" role="img" aria-label="VR头显结构示意图"><path d="M35 41c52-21 138-21 190 0l17 64c2 9-5 17-14 17h-48c-8 0-15-4-19-11l-12-21h-38l-12 21c-4 7-11 11-19 11H32c-9 0-16-8-14-17z" fill="none" stroke="#62d1b3" stroke-width="8" stroke-linejoin="round"/><path d="M38 42 20 28M222 42l18-14" fill="none" stroke="#8ea4a8" stroke-width="7" stroke-linecap="round"/><circle cx="83" cy="74" r="8" fill="#dbe7e7"/><circle cx="177" cy="74" r="8" fill="#dbe7e7"/></svg>
+            <small>PICO 4 PRO · 6DoF VR</small>
+          </div>
+          <div>
+            <span class="status">现有设备可直接使用</span>
+            <h3>PICO 4 Pro</h3>
+            <p class="model">实验室现有数量：2台</p>
+            <p class="product-copy">一体式VR头显，设备本身完成运算和显示，不需要外接电脑。官方商店中的 Wolvic 支持 PICO 4 Pro，可打开沉浸式 WebXR 网页；也可安装使用 PICO SDK 制作的 Unity 应用。</p>
+            <div class="links"><a href="https://www.picoxr.com/cn/products/pico4-pro" target="_blank" rel="noreferrer">官方产品页</a><a href="https://www.picoxr.com/cn/products/pico4-pro/specs" target="_blank" rel="noreferrer">官方参数页</a><a href="https://store-global.picoxr.com/global/detail/1/7171016990772166662" target="_blank" rel="noreferrer">Wolvic 官方商店页</a></div>
+          </div>
+        </div>
+        <div class="spec-wrap">
+          <div class="spec-group">
+            <h4>PICO 4 Pro 参数</h4>
+            <table class="spec-table"><tbody>
+              <tr><th>处理器</th><td>Qualcomm Snapdragon XR2，最高 2.84 GHz</td></tr>
+              <tr><th>内存 / 存储</th><td>8 GB LPDDR5 / 512 GB UFS 3.1</td></tr>
+              <tr><th>显示分辨率</th><td>4320 × 2160，总计 1200 PPI</td></tr>
+              <tr><th>刷新率</th><td>72 Hz / 90 Hz</td></tr>
+              <tr><th>光学系统</th><td>Pancake；视场角 105°；20.6 PPD</td></tr>
+              <tr><th>瞳距</th><td>62–72 mm，自动连续调节</td></tr>
+              <tr><th>定位</th><td>头部与手柄 6DoF 定位</td></tr>
+              <tr><th>摄像头</th><td>4个单色鱼眼、1个RGB、2个眼动、1个面部追踪摄像头</td></tr>
+              <tr><th>无线连接</th><td>Wi‑Fi 6、Bluetooth 5.1</td></tr>
+              <tr><th>电池 / 充电</th><td>典型 6070 mAh；20 W；支持 QC 3.0 / PD 3.0</td></tr>
+              <tr><th>重量</th><td>整机约 597 g；头显主体约 304 g，不含绑带</td></tr>
+              <tr><th>系统</th><td>PICO OS 5.0</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section>
+      <h2 class="section-title">素材支持情况</h2>
+      <table class="fit-table">
+        <thead><tr><th>素材</th><th>是否可用</th><th>实现方式</th></tr></thead>
+        <tbody>
+          <tr><th>360°全景照片</th><td><span class="yes">可以</span></td><td>将2:1等距柱状投影照片放入 WebXR 全景网页，使用 Wolvic 打开；或将照片预装到 Unity 应用。</td></tr>
+          <tr><th>360°全景视频</th><td><span class="yes">可以</span></td><td>使用支持360°视频的播放器或 Unity 应用。视频建议使用 MP4，并根据设备解码能力控制分辨率和码率。</td></tr>
+          <tr><th>普通照片直接打开</th><td><span class="conditional">只能平面显示</span></td><td>系统文件或网页直接打开普通照片时只显示平面画面，不会自动变成360°环境。</td></tr>
+          <tr><th>离线工地使用</th><td><span class="yes">可以</span></td><td>将全景内容预下载，或打包成不依赖网络的本地应用。现场只需开机、启动应用和选择场景。</td></tr>
+          <tr><th>边走边看</th><td><span class="no">不建议</span></td><td>VR会遮挡真实环境。应在清空障碍物的固定区域内站立或坐姿使用。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="requirements">
+      <h2 class="section-title">满足要求所需配置</h2>
+      <div class="steps">
+        <div class="step"><div><h3>使用现有 PICO 4 Pro</h3><p>头显充满电，配套手柄完成配对。仅查看全景素材不需要连接电脑。</p></div></div>
+        <div class="step"><div><h3>整理全景素材</h3><p>照片使用等距柱状投影格式，宽高比为 <code>2:1</code>，文件格式使用 JPG 或 PNG；视频使用 MP4。普通照片不能直接作为完整360°场景。</p></div></div>
+        <div class="step"><div><h3>选择运行方式</h3><p>低开发量方案：安装 Wolvic，打开基于 WebXR 的全景网页。稳定离线方案：使用 Unity 和 PICO SDK 制作应用，将素材、菜单和实验任务打包到同一个安装包。</p></div></div>
+        <div class="step"><div><h3>配置现场操作</h3><p>将素材预装到设备，首页只保留场景选择、返回和退出。关闭无关通知，统一设置亮度、音量和头显边界。</p></div></div>
+        <div class="step"><div><h3>设置使用区域</h3><p>划出无障碍固定区域，优先使用坐姿或原地站立模式；安排一名观察人员；每次佩戴前清洁面罩并检查绑带。</p></div></div>
+      </div>
+    </section>
+
+    <section id="existing">
+      <h2 class="section-title">实验室现有设备</h2>
+      <div class="existing">
+        <div class="existing-row"><b>PICO 4 Pro × 2</b><div><span class="yes">可以</span></div><p>作为本方案的直接使用设备。安装 Wolvic 或部署 Unity 应用后即可显示360°照片和视频。</p></div>
+        <div class="existing-row"><b>AR设备</b><div><span class="no">不用于本方案</span></div><p>HoloLens 2、乐奇AI眼镜属于AR路线，真实环境仍可见，不作为本页的VR沉浸显示设备。</p></div>
+        <div class="existing-row"><b>其他VR头显</b><div><span class="conditional">不作为采购推荐</span></div><p>实验室内的非国产VR头显可完成类似显示，但本方案按国产设备优先要求，设备与采购建议统一采用 PICO。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">现场限制</h2>
+      <div class="notice"><strong>VR头显适合固定位置、短时查看，不适合在施工活动区内佩戴行走。</strong><p>设备约597 g，且显示画面会遮挡真实环境。用于工地实验时，应设置独立无障碍区域、使用安全边界并安排现场观察人员。</p></div>
+    </section>
+
+    <section id="sources">
+      <h2 class="section-title">产品与资料链接</h2>
+      <ul class="source-list">
+        <li><a href="https://www.picoxr.com/cn/products/pico4-pro/specs" target="_blank" rel="noreferrer">PICO 4 Pro 官方参数页</a>：处理器、内存、显示、光学、定位、摄像头、连接、电池和重量参数。</li>
+        <li><a href="https://www.picoxr.com/cn/products/pico4-pro" target="_blank" rel="noreferrer">PICO 4 Pro 官方产品页</a>：眼动追踪、彩色透视、空间定位和设备结构说明。</li>
+        <li><a href="https://store-global.picoxr.com/global/detail/1/7171016990772166662" target="_blank" rel="noreferrer">Wolvic — PICO 官方商店</a>：支持 PICO 4 Pro，可运行沉浸式 WebXR 网页。</li>
+        <li><a href="https://developer.picoxr.com/document/xr-hardware/" target="_blank" rel="noreferrer">PICO 开发者硬件说明</a>：PICO 4系列显示、刷新率、视场角和处理器信息。</li>
+        <li><a href="https://www.vrtourviewer.com/" target="_blank" rel="noreferrer">VR Tourviewer</a>：可选的第三方全景展示工具，支持 PICO 4、在线与离线全景项目。</li>
+      </ul>
+    </section>
+
+    <div class="foot">结论范围：360°全景照片和视频的沉浸显示。视线数据记录、任务计时、风险点标注和多人同步需要在 Unity 应用或实验系统中单独开发。</div>
+  </main>
+</body>
+</html>

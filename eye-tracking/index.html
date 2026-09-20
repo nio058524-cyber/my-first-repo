@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PICO 4 Pro眼动实验实施方案</title>
+  <meta name="description" content="实验室现有PICO 4 Pro用于VR眼动实验的数据采集、Unity接入、指标设计与实施步骤。" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2318242b'/%3E%3Cpath d='M8 32c10-17 38-17 48 0-10 17-38 17-48 0Z' fill='none' stroke='%2359c3a7' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23fff'/%3E%3C/svg%3E" />
+  <style>
+    :root{--ink:#17242c;--muted:#617078;--line:#d8e0e3;--soft:#f3f6f7;--paper:#fff;--green:#13765e;--green-soft:#e7f5f0;--amber:#865b18;--amber-soft:#fff4dc;--dark:#182a32}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:16px;line-height:1.65}a{color:var(--green);text-underline-offset:3px}.page{width:min(940px,calc(100% - 32px));margin:auto}
+    .topbar{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.topbar .page{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:20px}.name{font-weight:760}.nav{display:flex;gap:22px}.nav a{color:var(--muted);text-decoration:none;font-size:14px}.nav a:hover{color:var(--ink)}
+    main{padding:48px 0 72px}.eyebrow{margin:0 0 9px;color:var(--green);font-size:13px;font-weight:780;letter-spacing:.09em}.title{margin:0;font-size:clamp(30px,5vw,44px);line-height:1.18;letter-spacing:-.025em}.meta{margin:12px 0 0;color:var(--muted)}
+    .result{margin-top:28px;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--green);padding:22px 24px;display:grid;grid-template-columns:110px 1fr;gap:22px}.result-label{font-size:14px;color:var(--green);font-weight:760}.result-text{font-size:18px;font-weight:670}.result-note{display:block;margin-top:7px;color:var(--muted);font-size:15px;font-weight:400}
+    section{margin-top:48px}.section-title{margin:0 0 18px;font-size:25px;line-height:1.3}.product{background:var(--paper);border:1px solid var(--line)}.product-head{display:grid;grid-template-columns:290px 1fr;gap:28px;padding:26px;border-bottom:1px solid var(--line)}.device-visual{min-height:230px;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#dbe7e7;padding:24px}.device-visual svg{width:190px;max-width:85%;height:auto}.device-visual small{margin-top:14px;color:#a8babd;letter-spacing:.08em}.status{display:inline-block;background:var(--green-soft);color:var(--green);padding:4px 9px;font-size:13px;font-weight:760}.product h3{margin:10px 0 4px;font-size:28px;line-height:1.25}.model{color:var(--muted);margin:0}.product-copy{margin:18px 0 0}.links{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px}.links a{font-weight:700;font-size:14px}.spec-wrap{padding:26px}.spec-table,.data-table{width:100%;border-collapse:collapse}.spec-table th,.spec-table td,.data-table th,.data-table td{padding:12px;text-align:left;border-top:1px solid var(--line);vertical-align:top}.spec-table th{width:190px;color:var(--muted);font-weight:500}.spec-table td{font-weight:620}.data-table{background:var(--paper);border:1px solid var(--line)}.data-table thead th{border-top:0;background:#eaf0f1;font-size:14px}.data-table td:first-child{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;white-space:nowrap}
+    .steps{background:var(--paper);border:1px solid var(--line);counter-reset:item}.step{display:grid;grid-template-columns:46px 1fr;gap:16px;padding:20px 22px;border-top:1px solid var(--line)}.step:first-child{border-top:0}.step:before{counter-increment:item;content:counter(item);width:34px;height:34px;background:#eaf0f1;display:grid;place-items:center;font-weight:760}.step h3{margin:2px 0 3px;font-size:17px}.step p{margin:0;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.metric{background:var(--paper);border:1px solid var(--line);padding:20px}.metric h3{margin:0 0 8px;font-size:17px}.metric p{margin:0;color:var(--muted)}.notice{background:var(--amber-soft);border:1px solid #edd9ae;border-left:5px solid #b37c22;padding:20px 22px}.notice strong{display:block;margin-bottom:5px}.notice p{margin:0;color:#685331}.source-list{margin:0;padding-left:21px;color:var(--muted)}.source-list li+li{margin-top:8px}.foot{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+    @media(max-width:720px){.nav{display:none}main{padding-top:32px}.result{grid-template-columns:1fr;gap:5px}.product-head{grid-template-columns:1fr}.device-visual{min-height:205px}.spec-table th{width:42%}.grid{grid-template-columns:1fr}.data-table,.data-table tbody,.data-table tr,.data-table th,.data-table td{display:block}.data-table thead{display:none}.data-table tbody tr{border-top:1px solid var(--line);padding:10px 0}.data-table tbody tr:first-child{border-top:0}.data-table td{border:0;padding:5px 16px}.data-table td:first-child{font-weight:700}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="page"><div class="name">PICO 4 Pro眼动实验说明</div><nav class="nav"><a href="#device">现有设备</a><a href="#workflow">实施步骤</a><a href="#data">数据字段</a><a href="#sources">资料链接</a></nav></div></header>
+  <main class="page">
+    <p class="eyebrow">VR · EYE TRACKING</p>
+    <h1 class="title">PICO 4 Pro眼动实验实施方案</h1>
+    <p class="meta">适用场景：360°全景、Unity施工场景、危险源识别与视觉注意研究。</p>
+
+    <div class="result">
+      <div class="result-label">结论</div>
+      <div class="result-text">优先使用实验室现有的 PICO 4 Pro，不需要立即采购新的眼动头显。
+        <span class="result-note">设备已内置眼动追踪。先用一台设备完成“校准—注视读取—AOI命中—事件同步—CSV导出”的最小实验，再根据实测数据决定是否需要升级设备。</span>
+      </div>
+    </div>
+
+    <section id="device">
+      <h2 class="section-title">现有设备与可行性</h2>
+      <article class="product">
+        <div class="product-head">
+          <div class="device-visual" aria-label="PICO 4 Pro眼动头显示意">
+            <svg viewBox="0 0 260 150" role="img" aria-label="眼动头显结构示意图"><path d="M35 41c52-21 138-21 190 0l17 64c2 9-5 17-14 17h-48c-8 0-15-4-19-11l-12-21h-38l-12 21c-4 7-11 11-19 11H32c-9 0-16-8-14-17z" fill="none" stroke="#62d1b3" stroke-width="8" stroke-linejoin="round"/><circle cx="83" cy="74" r="9" fill="#dbe7e7"/><circle cx="177" cy="74" r="9" fill="#dbe7e7"/><path d="M82 74h96" stroke="#62d1b3" stroke-width="3" stroke-dasharray="7 7"/></svg>
+            <small>PICO 4 PRO · EYE TRACKING</small>
+          </div>
+          <div>
+            <span class="status">实验室现有设备优先</span>
+            <h3>PICO 4 Pro</h3>
+            <p class="model">VR一体机 · 内置眼动与面部追踪</p>
+            <p class="product-copy">官方产品资料明确列出眼动追踪、视线交互和自动瞳距检测。PICO Unity开发资料提供Eye Tracking入口，可将注视信息写入实验程序，并通过射线检测映射到场景对象或AOI。</p>
+            <div class="links"><a href="https://www.picoxr.com/cn/products/pico4-pro" target="_blank" rel="noreferrer">PICO 4 Pro官方产品页</a><a href="https://developer.picoxr.com/document/unity/eye-tracking/" target="_blank" rel="noreferrer">Unity眼动开发文档</a></div>
+          </div>
+        </div>
+        <div class="spec-wrap">
+          <table class="spec-table"><tbody>
+            <tr><th>眼动硬件</th><td>内置眼动追踪摄像头</td></tr>
+            <tr><th>设备功能</th><td>视线交互、自动瞳距检测、注视点渲染</td></tr>
+            <tr><th>开发环境</th><td>Unity + PICO Unity Integration SDK</td></tr>
+            <tr><th>实验场景</th><td>360°照片、360°视频、Unity三维施工场景</td></tr>
+            <tr><th>首轮目标</th><td>确认可用字段、实际输出频率、有效帧率、校准稳定性与离线导出</td></tr>
+          </tbody></table>
+        </div>
+      </article>
+    </section>
+
+    <section id="workflow">
+      <h2 class="section-title">最小实验实施步骤</h2>
+      <div class="steps">
+        <div class="step"><div><h3>记录软件版本</h3><p>记录头显系统版本、Unity版本和PICO SDK版本，固定实验环境。</p></div></div>
+        <div class="step"><div><h3>完成单人校准</h3><p>每名被试开始前执行眼动校准，并保存校准是否通过。</p></div></div>
+        <div class="step"><div><h3>逐帧读取注视信息</h3><p>在Unity中读取注视起点、注视方向和有效性字段，并记录时间戳。</p></div></div>
+        <div class="step"><div><h3>映射实验对象</h3><p>通过Raycast得到注视对象、AOI编号和三维命中位置。</p></div></div>
+        <div class="step"><div><h3>同步任务事件</h3><p>记录刺激出现、任务开始、危险源发现、回答和任务结束等时间点。</p></div></div>
+        <div class="step"><div><h3>导出并检查CSV</h3><p>连续运行10分钟，检查实际输出频率、无效帧比例、丢帧和重复时间戳。</p></div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">可形成的实验指标</h2>
+      <div class="grid">
+        <article class="metric"><h3>视觉注意</h3><p>AOI首次注视时间、注视次数、总停留时长和回访次数。</p></article>
+        <article class="metric"><h3>搜索过程</h3><p>危险源发现顺序、注视转移、扫描路径和任务阶段差异。</p></article>
+        <article class="metric"><h3>多模态分析</h3><p>与RPE、HRV、任务绩效和实验事件按时间戳对齐。</p></article>
+      </div>
+    </section>
+
+    <section id="data">
+      <h2 class="section-title">建议导出的最小数据表</h2>
+      <table class="data-table">
+        <thead><tr><th>字段</th><th>用途</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>timestamp_ms</td><td>时间同步</td><td>使用统一、高精度且单调递增的时间基准。</td></tr>
+          <tr><td>gaze_origin_xyz</td><td>注视射线起点</td><td>保存头显或世界坐标系中的三维坐标。</td></tr>
+          <tr><td>gaze_direction_xyz</td><td>注视方向</td><td>保存归一化方向向量。</td></tr>
+          <tr><td>hit_object</td><td>对象识别</td><td>Unity射线命中的对象名称。</td></tr>
+          <tr><td>aoi_id</td><td>关注区域统计</td><td>由实验程序定义稳定的AOI编号。</td></tr>
+          <tr><td>validity</td><td>质量控制</td><td>用于剔除追踪失败或无效帧。</td></tr>
+          <tr><td>event_code</td><td>实验事件对齐</td><td>记录任务、刺激、回答等关键节点。</td></tr>
+          <tr><td>pupil / openness</td><td>可选状态指标</td><td>仅在当前SDK与设备实测能够稳定取得时保存。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="notice"><strong>是否需要另购设备</strong><p>暂不建议采购。只有当PICO 4 Pro实测无法提供研究所需字段、有效帧率、精度或稳定性时，再借测VIVE Focus Vision等设备进行对照。Rokid Max 2可用于AR内容呈现，但公开资料未显示其具备眼动采集硬件。</p></div>
+    </section>
+
+    <section id="sources">
+      <h2 class="section-title">资料链接</h2>
+      <ol class="source-list">
+        <li><a href="https://www.picoxr.com/cn/products/pico4-pro" target="_blank" rel="noreferrer">PICO 4 Pro官方产品页</a>：眼动追踪、视线交互、自动瞳距与硬件能力。</li>
+        <li><a href="https://developer.picoxr.com/document/unity/eye-tracking/" target="_blank" rel="noreferrer">PICO Unity Eye Tracking文档</a>：Unity眼动功能开发入口。</li>
+        <li><a href="https://www.vive.com/us/product/vive-focus-vision/specs/" target="_blank" rel="noreferrer">VIVE Focus Vision规格页</a>：备选设备的眼动参数。</li>
+        <li><a href="https://global.rokid.com/pages/rokid-max-2" target="_blank" rel="noreferrer">Rokid Max 2产品页</a>：现有AR显示设备能力。</li>
+      </ol>
+    </section>
+
+    <p class="foot">资料整理日期：2026年9月20日。未公开的采样率、SDK字段和数据权限不作推定，以PICO 4 Pro实机测试结果为准。</p>
+  </main>
+</body>
+</html>
